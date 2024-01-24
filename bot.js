@@ -107,7 +107,7 @@ function initBot() {
       })
 
       if (!Skull) { //En caso de que no encuentre el bloque va a cancelar el envio y va a enviar un mensaje
-        bot.chat("/msg " + usuario + " " + ErrorMessage.replaceAll("{{RequestID}}", RequestID).replaceAll("{{Usuario}}", usuario))
+        bot.chat("/msg " + usuario + " " + ErrorMessage.replaceAll("{{RequestID}}", RequestID).replaceAll("{{User}}", usuario))
         ShouldBotBeKilled = false
         delete QueueItems[RequestID]
         setBussyStatus(false)
@@ -126,7 +126,7 @@ function initBot() {
       })
 
       if (!chest) { //Si no lo encuentra cancela el envio
-        bot.chat("/msg " + usuario + " " + ErrorMessage.replaceAll("{{RequestID}}", RequestID).replaceAll("{{Usuario}}", usuario))
+        bot.chat("/msg " + usuario + " " + ErrorMessage.replaceAll("{{RequestID}}", RequestID).replaceAll("{{User}}", usuario))
         ShouldBotBeKilled = false
         delete QueueItems[RequestID]
         setBussyStatus(false)
@@ -139,7 +139,7 @@ function initBot() {
       items = chest_window.containerItems(); //Obtiene los items
       if (items.length == 0) {
         await new Promise(resolve => setTimeout(resolve, 2000));
-        bot.chat("/msg " + usuario + " " + UnstockedItemMessage.replaceAll("{{RequestID}}", RequestID).replaceAll("{{Usuario}}", usuario)) //Si no hay items envia un mensaje que dice que no esta en stock
+        bot.chat("/msg " + usuario + " " + UnstockedItemMessage.replaceAll("{{RequestID}}", RequestID).replaceAll("{{User}}", usuario)) //Si no hay items envia un mensaje que dice que no esta en stock
         bot.closeWindow(chest_window)
       }
       else { //En caso de que si encuentre el kit lo va a sacar del cofre 
@@ -154,11 +154,11 @@ function initBot() {
       }
     }
     await new Promise(resolve => setTimeout(resolve, 2000)); //Delay de 2 segundos antes de enviar tp
-    bot.chat("/msg " + usuario + " " + AcceptTPASK.replaceAll("{{RequestID}}", RequestID).replaceAll("{{Usuario}}", usuario).replaceAll("{{TPAcceptTime}}", TPAcceptTime / 1000))
+    bot.chat("/msg " + usuario + " " + AcceptTPASK.replaceAll("{{RequestID}}", RequestID).replaceAll("{{User}}", usuario).replaceAll("{{TPAcceptTime}}", TPAcceptTime / 1000))
     bot.chat("/tpa " + usuario) //Envia tp
     let teleportAccepted = false;
     timeoutId = setTimeout(() => {//Si pasa TPAcceptTime y el usuario no acepta tp se cancela y el bot se suicida
-      bot.chat("/msg " + usuario + " "  +ExpiredTP.replaceAll("{{RequestID}}", RequestID).replaceAll("{{Usuario}}", usuario));
+      bot.chat("/msg " + usuario + " "  +ExpiredTP.replaceAll("{{RequestID}}", RequestID).replaceAll("{{User}}", usuario));
       bot.chat("/tpcancel " + usuario)
       if (ShouldBotBeKilled){
       Suicidio();
@@ -168,14 +168,14 @@ function initBot() {
 
 
     bot.on('message', message => {
-      if (message == UTPAcceptMSG.replaceAll("{{Usuario}}", usuario) && !teleportAccepted) { //Si el usuario acepta la solicitud de teletransporte
+      if (message == UTPAcceptMSG.replaceAll("{{User}}", usuario) && !teleportAccepted) { //Si el usuario acepta la solicitud de teletransporte
         teleportAccepted = true;
         expulsar()
         clearTimeout(timeoutId); //Elimina el temporizador de 10sg para aceptar
         return "[OK] El delivery se completo sin ningun percance" //Acaba la funcion
       }
 
-      if (message == UTPCancelMSG.replaceAll("{{Usuario}}", usuario)) { //Si el usuario rechaza
+      if (message == UTPCancelMSG.replaceAll("{{User}}", usuario)) { //Si el usuario rechaza
         if (ShouldBotBeKilled){
         Suicidio() //Mata el bot
       }
