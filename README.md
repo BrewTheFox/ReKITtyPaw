@@ -16,4 +16,4 @@
 </p>
 
 ## What is this?
-ReKITtyPaw
+### ReKITtyPaw is a Minecraft bot designed to streamline the setup of kit delivery bots in anarchy servers. Developed in JavaScript using the Mineflayer library, ReKITtyPaw aims to simplify the configuration process through an easy-to-use JSON file.
