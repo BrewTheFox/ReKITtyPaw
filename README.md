@@ -22,4 +22,4 @@
 
 - #### Easy to configure.
 - #### Compatible with almost* any server.
-- #### 
+- #### Made to be used together with discord.
