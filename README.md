@@ -41,7 +41,10 @@ cd ReKittyPaw
 - #### Install the project dependencies:
 
 
-```bash
+```node
 npm install
 ```
+
+## How to configure:
+#### After you have installed the project, you should configure it in the file ./config.json. There are some important things to take into consideration.
 
