@@ -23,3 +23,25 @@
 - #### Easy to configure.
 - #### Compatible with almost* any server.
 - #### Made to be used together with discord.
+
+## How to install:
+- #### First of all clone the git repository of the project with this command:
+
+```bash
+git clone https://github.com/BrewTheFox/ReKITtyPaw.git ./ReKittyPaw
+```
+
+- #### Then change the directory to ReKittyPaw:
+
+
+```bash
+cd ReKittyPaw
+```
+
+- #### Install the project dependencies:
+
+
+```bash
+npm install
+```
+
