@@ -48,3 +48,9 @@ npm install
 ## How to configure:
 #### After you have installed the project, you should configure it in the file ./config.json. There are some important things to take into consideration.
 
+- ## Keywords
+  | **Keyword**      | **Replaced With**                                                     |
+  |------------------|-----------------------------------------------------------------------|
+  | {{User}}         | The minecraft username of the person that requested the delivery.     |
+  | {{TPAcceptTime}} | The time that you've set on TPAcceptTime converted to seconds.        |
+  | {{RequestID}}    | A randomly generated uuid generated after the user requested the kit. |
