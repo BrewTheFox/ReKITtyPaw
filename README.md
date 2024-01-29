@@ -50,9 +50,9 @@ npm install
 
 - ## Keywords
   
-  | **Keyword**        | **Replaced With**                                                     |
-  |--------------------|-----------------------------------------------------------------------|
-  | {{User}}           | The minecraft username of the person that requested the delivery.     |
-  | {{TPAcceptTime}}   | The time that you've set on TPAcceptTime converted to seconds.        |
-  | {{RequestID}}      | A randomly generated uuid generated after the user requested the kit. |
-  | {{MinuteKitDelay}} | Replaced with the value of MinuteKitDelay in the config file.         |
+  | **Keyword**        | **Replaced With**                                                     | **Used in**                                                                            |
+  |--------------------|-----------------------------------------------------------------------|----------------------------------------------------------------------------------------|
+  | {{User}}           | The minecraft username of the person that requested the delivery.     | UTPCancelMSG, UTPAcceptMSG, ExpiredTP, AcceptTPASK, ErrorMessage, UnstockedItemMessage |
+  | {{TPAcceptTime}}   | The time that you've set on TPAcceptTime converted to seconds.        | AcceptTPASK                                                                            |
+  | {{RequestID}}      | A randomly generated uuid generated after the user requested the kit. | ExpiredTP, AcceptTPASK, ErrorMessage, UnstockedItemMessage                             |
+  | {{MinuteKitDelay}} | Replaced with the value of MinuteKitDelay in the config file.         | KitDelayMessage                                                                        |
