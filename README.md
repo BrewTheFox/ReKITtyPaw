@@ -56,3 +56,6 @@ npm install
   | {{TPAcceptTime}}   | The time that you've set on TPAcceptTime converted to seconds.        | AcceptTPASK                                                                            |
   | {{RequestID}}      | A randomly generated uuid generated after the user requested the kit. | ExpiredTP, AcceptTPASK, ErrorMessage, UnstockedItemMessage                             |
   | {{MinuteKitDelay}} | Replaced with the value of MinuteKitDelay in the config file.         | KitDelayMessage                                                                        |
+
+- ## The example ./config.json file
+
