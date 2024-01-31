@@ -58,51 +58,50 @@ npm install
   | {{MinuteKitDelay}} | Replaced with the value of MinuteKitDelay in the config file.         | KitDelayMessage                                                                        |
 
 - ## The example ./config.json file
-  
-  | **Keyword**               | **Content**                                                                                                         | **Usage** |
-  |---------------------------|---------------------------------------------------------------------------------------------------------------------|-----------|
-  | token                     | havfYeMZVkMmAfz0TiNmyFYcGk19rdSG1xV11NP2Cp8yP6pygeQndRLSyNezpCz0T9Y2BpDm3JwNUrFcUhuNtVVwzP3d2Rzwe6uw                |           |
-  | username                  | MyNameIsBot                                                                                                         |           |
-  | password                  | ThisIsMyPassword                                                                                                    |           |
-  | host                      | RandomAnarchyServer.net                                                                                             |           |
-  | port                      | 12345                                                                                                               |           |
-  | version                   | 1.18.1                                                                                                              |           |
-  | TPDelay                   | 5000                                                                                                                |           |
-  | HomeDelay                 | 8000                                                                                                                |           |
-  | LavaCoords                | [-14, 65, 0]                                                                                                        |           |
-  | TPAcceptTime              | 15000                                                                                                               |           |
-  | MaxDeliverKits            | 10                                                                                                                  |           |
-  | BotOwner                  | ThisIsYourMinecraftUsername                                                                                         |           |
-  | HomeMessage               | You are now in home                                                                                                 |           |
-  | HomeCancelMSG             | Pending teleportation request cancelled.                                                                            |           |
-  | AfterRegisterMSG          | Successfully registered!                                                                                            |           |
-  | AfterLoginMSG             | You have successfully logged in!                                                                                    |           |
-  | RegisterMSG               | Please use /register 'Password' 'Password' to register.                                                             |           |
-  | LoginMSG                  | Welcome again. Please use /login 'Password' to start enjoying.                                                      |           |
-  | UTPCancelMSG              | [RandomTPA] {{User}} cancelled your petition!                                                                       |           |
-  | UTPAcceptMSG              | [RandomTPA] {{User}} Teleported to you!                                                                             |           |
-  | AcceptTPASK               | You have {{TPAcceptTime}} seconds to accept your request that have the id {{RequestID}} before it cancels.          |           |
-  | ExpiredTP                 | The request with the id {{RequestID}} expired.                                                                      |           |
-  | UnstockedItemMessage      | One of the items that you have requested is not in stock, please try again later :(                                 |           |
-  | ErrorMessage              | There was a problem delivering the kit, please try again later :(                                                   |           |
-  | KitSelectionMenuTitle     | Selection Menu - Ranarchy                                                                                           |           |
-  | MinuteKitDelay            | 5                                                                                                                   |           |
-  | KitDelayMessage           | Hey hold on you didn't wait the {{MinuteKitDelay}} minutes delay :(                                                 |           |
-  | EmbedTitle                | Request a delivery.                                                                                                 |           |
-  | Embed1Title               | How to?                                                                                                             |           |
-  | Embed1Content             | Just click the button down this text                                                                                |           |
-  | Embed2Title               |                                                                                                                     |           |
-  | Embed2Content             |                                                                                                                     |           |
-  | Embed3Title               |                                                                                                                     |           |
-  | Embed3Content             |                                                                                                                     |           |
-  | KitMenuOpenText           | Request your kit NwN                                                                                                |           |
-  | ServerRestartError        | We're sorry. Our Server restarted, please try filling the form again.                                               |           |
-  | MinecraftEmptyServerError | Hey. you're not on the Minecraft Server.                                                                            |           |
-  | NameAskMessage            | Now tell me. which one is your nickname?                                                                            |           |
-  | GenericError              | We're sorry. there was a problem handling your request.                                                             |           |
-  | VoucherText               | Thank you for using Ranarchy delivery bot. Please wait some time for the bot to be available and delivers your kit. |           |
-  | KitsDict                  | {"KitOption1":"wither_skeleton_skull", "KitOption2":"detector_rail"}                                                |           |
-  | RepresentativeKitEmoji    | 🍕                                                                                                                   |           |
-  | SelectedKitEmoji          | 🌏                                                                                                                   |           |
-  | UnSelectedKitEmoji        | 🧨                                                                                                                   |           |
+  | **Keyword**               | **Content**                                                                                                         | **Usage**                                                                        |
+  |---------------------------|---------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+  | token                     | havfYeMZVkMmAfz0TiNmyFYcGk19rdSG1xV11NP2Cp8yP6pygeQndRLSyNezpCz0T9Y2BpDm3JwNUrFcUhuNtVVwzP3d2Rzwe6uw                | This is your discord bot token                                                   |
+  | username                  | MyNameIsBot                                                                                                         | Bot's minecraft username                                                         |
+  | password                  | ThisIsMyPassword                                                                                                    | If the server needs authentication here is where you should put the bot password |
+  | host                      | RandomAnarchyServer.net                                                                                             | The minecraft server IP Address                                                  |
+  | port                      | 12345                                                                                                               | The minecraft server port                                                        |
+  | version                   | 1.18.1                                                                                                              | The minecraft server version                                                     |
+  | TPDelay                   | 5000                                                                                                                | The delay the bot will need to wait after the user accepted the teleport request |
+  | HomeDelay                 | 8000                                                                                                                | The delay the bot will need to wait after "/home" is written                     |
+  | LavaCoords                | [-14, 65, 0]                                                                                                        |                                                                                  |
+  | TPAcceptTime              | 15000                                                                                                               |                                                                                  |
+  | MaxDeliverKits            | 10                                                                                                                  |                                                                                  |
+  | BotOwner                  | ThisIsYourMinecraftUsername                                                                                         |                                                                                  |
+  | HomeMessage               | You are now in home                                                                                                 |                                                                                  |
+  | HomeCancelMSG             | Pending teleportation request cancelled.                                                                            |                                                                                  |
+  | AfterRegisterMSG          | Successfully registered!                                                                                            |                                                                                  |
+  | AfterLoginMSG             | You have successfully logged in!                                                                                    |                                                                                  |
+  | RegisterMSG               | Please use /register 'Password' 'Password' to register.                                                             |                                                                                  |
+  | LoginMSG                  | Welcome again. Please use /login 'Password' to start enjoying.                                                      |                                                                                  |
+  | UTPCancelMSG              | [RandomTPA] {{User}} cancelled your petition!                                                                       |                                                                                  |
+  | UTPAcceptMSG              | [RandomTPA] {{User}} Teleported to you!                                                                             |                                                                                  |
+  | AcceptTPASK               | You have {{TPAcceptTime}} seconds to accept your request that have the id {{RequestID}} before it cancels.          |                                                                                  |
+  | ExpiredTP                 | The request with the id {{RequestID}} expired.                                                                      |                                                                                  |
+  | UnstockedItemMessage      | One of the items that you have requested is not in stock, please try again later :(                                 |                                                                                  |
+  | ErrorMessage              | There was a problem delivering the kit, please try again later :(                                                   |                                                                                  |
+  | KitSelectionMenuTitle     | Selection Menu - Ranarchy                                                                                           |                                                                                  |
+  | MinuteKitDelay            | 5                                                                                                                   |                                                                                  |
+  | KitDelayMessage           | Hey hold on you didn't wait the {{MinuteKitDelay}} minutes delay :(                                                 |                                                                                  |
+  | EmbedTitle                | Request a delivery.                                                                                                 |                                                                                  |
+  | Embed1Title               | How to?                                                                                                             |                                                                                  |
+  | Embed1Content             | Just click the button down this text                                                                                |                                                                                  |
+  | Embed2Title               |                                                                                                                     |                                                                                  |
+  | Embed2Content             |                                                                                                                     |                                                                                  |
+  | Embed3Title               |                                                                                                                     |                                                                                  |
+  | Embed3Content             |                                                                                                                     |                                                                                  |
+  | KitMenuOpenText           | Request your kit NwN                                                                                                |                                                                                  |
+  | ServerRestartError        | We're sorry. Our Server restarted, please try filling the form again.                                               |                                                                                  |
+  | MinecraftEmptyServerError | Hey. you're not on the Minecraft Server.                                                                            |                                                                                  |
+  | NameAskMessage            | Now tell me. which one is your nickname?                                                                            |                                                                                  |
+  | GenericError              | We're sorry. there was a problem handling your request.                                                             |                                                                                  |
+  | VoucherText               | Thank you for using Ranarchy delivery bot. Please wait some time for the bot to be available and delivers your kit. |                                                                                  |
+  | KitsDict                  | {"KitOption1":"wither_skeleton_skull", "KitOption2":"detector_rail"}                                                |                                                                                  |
+  | RepresentativeKitEmoji    | 🍕                                                                                                                   |                                                                                  |
+  | SelectedKitEmoji          | 🌏                                                                                                                   |                                                                                  |
+  | UnSelectedKitEmoji        | 🧨                                                                                                                   |                                                                                  |
 
