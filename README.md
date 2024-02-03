@@ -75,11 +75,11 @@ npm install
   | BotOwner | ThisIsYourMinecraftUsername | Your minecraft username |
   | HomeMessage | You are now in home | The message that shows up in the minecraft chat when you've successfully teleported to your home |
   | HomeCancelMSG | Pending teleportation request cancelled. | The message that shows up in the minecraft chat when you didn't teleport to your home |
-  | AfterRegisterMSG | Successfully registered! |  |
-  | AfterLoginMSG | You have successfully logged in! |  |
-  | RegisterMSG | Please use /register 'Password' 'Password' to register. |  |
-  | LoginMSG | Welcome again. Please use /login 'Password' to start enjoying. |  |
-  | UTPCancelMSG | [RandomTPA] {{User}} cancelled your petition! |  |
+  | AfterRegisterMSG | Successfully registered! | The message that shows up in the minecraft chat when you register in the server |
+  | AfterLoginMSG | You have successfully logged in! | The message that shows up in the minecraft chat when you login in the server |
+  | RegisterMSG | Please use /register 'Password' 'Password' to register. | The message that shows up in the minecraft chat that asks you to register |
+  | LoginMSG | Welcome again. Please use /login 'Password' to start enjoying. | The message that shows up in the minecraft chat that asks you to login |
+  | UTPCancelMSG | [RandomTPA] {{User}} cancelled your petition! | The message that shows up when the user cancels your teleport request  |
   | UTPAcceptMSG | [RandomTPA] {{User}} Teleported to you! |  |
   | AcceptTPASK | You have {{TPAcceptTime}} seconds to accept your request that have the id {{RequestID}} before it cancels. |  |
   | ExpiredTP | The request with the id {{RequestID}} expired. |  |
