@@ -80,13 +80,13 @@ npm install
   | RegisterMSG | Please use /register 'Password' 'Password' to register. | The message that shows up in the minecraft chat that asks you to register |
   | LoginMSG | Welcome again. Please use /login 'Password' to start enjoying. | The message that shows up in the minecraft chat that asks you to login |
   | UTPCancelMSG | [RandomTPA] {{User}} cancelled your petition! | The message that shows up when the user cancels your teleport request  |
-  | UTPAcceptMSG | [RandomTPA] {{User}} Teleported to you! |  |
-  | AcceptTPASK | You have {{TPAcceptTime}} seconds to accept your request that have the id {{RequestID}} before it cancels. |  |
-  | ExpiredTP | The request with the id {{RequestID}} expired. |  |
-  | UnstockedItemMessage | One of the items that you have requested is not in stock, please try again later :( |  |
-  | ErrorMessage | There was a problem delivering the kit, please try again later :( |  |
-  | KitSelectionMenuTitle | Selection Menu - Ranarchy |  |
-  | MinuteKitDelay | 5 |  |
+  | UTPAcceptMSG | [RandomTPA] {{User}} Teleported to you! | The message that shows up when the user accepts your teleport request |
+  | AcceptTPASK | You have {{TPAcceptTime}} seconds to accept your request that have the id {{RequestID}} before it cancels. | The message that the bot sends to the player before sending the teleport request |
+  | ExpiredTP | The request with the id {{RequestID}} expired. | The message that the bot sends after the teleport request expired |
+  | UnstockedItemMessage | One of the items that you have requested is not in stock, please try again later :( | The message that the bot sends if there is no stock of certain item |
+  | ErrorMessage | There was a problem delivering the kit, please try again later :( | The message that the bot sends if the delivery is cancelled |
+  | KitSelectionMenuTitle | Selection Menu - Ranarchy | The discord menu embed title |
+  | MinuteKitDelay | 5 | How long does the user will need to wait before begin able to request another kit |
   | KitDelayMessage | Hey hold on you didn't wait the {{MinuteKitDelay}} minutes delay :( |  |
   | EmbedTitle | Request a delivery. |  |
   | Embed1Title | How to? |  |
