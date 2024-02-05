@@ -87,18 +87,18 @@ npm install
   | ErrorMessage | There was a problem delivering the kit, please try again later :( | The message that the bot sends if the delivery is cancelled |
   | KitSelectionMenuTitle | Selection Menu - Ranarchy | The discord menu embed title |
   | MinuteKitDelay | 5 | How long does the user will need to wait before begin able to request another kit |
-  | KitDelayMessage | Hey hold on you didn't wait the {{MinuteKitDelay}} minutes delay :( |  |
-  | EmbedTitle | Request a delivery. |  |
-  | Embed1Title | How to? |  |
-  | Embed1Content | Just click the button down this text |  |
-  | Embed2Title |  |  |
-  | Embed2Content |  |  |
-  | Embed3Title |  |  |
-  | Embed3Content |  |  |
-  | KitMenuOpenText | Request your kit NwN |  |
-  | ServerRestartError | We're sorry. Our Server restarted, please try filling the form again. |  |
-  | MinecraftEmptyServerError | Hey. you're not on the Minecraft Server. |  |
-  | NameAskMessage | Now tell me. which one is your nickname? |  |
+  | KitDelayMessage | Hey hold on you didn't wait the {{MinuteKitDelay}} minutes delay :( | The message that shows up in discord when the user didn't wait the delay |
+  | EmbedTitle | Request a delivery. | The /menu embed title |
+  | Embed1Title | How to? | The /menu sub-embed 1 title |
+  | Embed1Content | Just click the button down this text | The content of the sub-embed 1 |
+  | Embed2Title |  | The /menu sub-embed 2 title |
+  | Embed2Content |  | The content of the sub-embed 2 |
+  | Embed3Title |  | The /menu sub-embed 3 title |
+  | Embed3Content |  | The content of the sub-embed 3 |
+  | KitMenuOpenText | Request your kit NwN | The text of the button for opening the kit delivery menu |
+  | ServerRestartError | We're sorry. Our Server restarted, please try filling the form again. | The error that should show up on discord when a user tries to complete a delivery but the bot restarted |
+  | MinecraftEmptyServerError | Hey. you're not on the Minecraft Server. | The error that should show up on discord when there's no one in the minecraft server |
+  | NameAskMessage | Now tell me. which one is your nickname? | The discord embed title of the name ask menu |
   | GenericError | We're sorry. there was a problem handling your request. |  |
   | VoucherText | Thank you for using Ranarchy delivery bot. Please wait some time for the bot to be available and delivers your kit. |  |
   | KitsDict | {"KitOption1":"wither_skeleton_skull", "KitOption2":"detector_rail"} |  |
