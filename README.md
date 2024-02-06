@@ -58,7 +58,6 @@ npm install
   | {{MinuteKitDelay}} | Replaced with the value of MinuteKitDelay in the config file.         | KitDelayMessage                                                                        |
 
 - ## The example ./config.json file
-
   | **Keyword** | **Content** | **Usage** |
   |---|---|---|
   | token | havfYeMZVkMmAfz0TiNmyFYcGk19rdSG1xV11NP2Cp8yP6pygeQndRLSyNezpCz0T9Y2BpDm3JwNUrFcUhuNtVVwzP3d2Rzwe6uw | This is your discord bot token |
@@ -99,9 +98,9 @@ npm install
   | ServerRestartError | We're sorry. Our Server restarted, please try filling the form again. | The error that should show up on discord when a user tries to complete a delivery but the bot restarted |
   | MinecraftEmptyServerError | Hey. you're not on the Minecraft Server. | The error that should show up on discord when there's no one in the minecraft server |
   | NameAskMessage | Now tell me. which one is your nickname? | The discord embed title of the name ask menu |
-  | GenericError | We're sorry. there was a problem handling your request. |  |
-  | VoucherText | Thank you for using Ranarchy delivery bot. Please wait some time for the bot to be available and delivers your kit. |  |
-  | KitsDict | {"KitOption1":"wither_skeleton_skull", "KitOption2":"detector_rail"} |  |
-  | RepresentativeKitEmoji | 🍕 |  |
-  | SelectedKitEmoji | 🌏 |  |
-  | UnSelectedKitEmoji | 🧨 |  |
+  | GenericError | We're sorry. there was a problem handling your request. | A Generic error that the discord bot will send when the error is unknown |
+  | VoucherText | Thank you for using Ranarchy delivery bot. Please wait some time for the bot to be available and delivers your kit. | The discord text that will be sent on the voucher |
+  | KitsDict | {"KitOption1":"wither_skeleton_skull", "KitOption2":"detector_rail"} | A dictionary that contains the kit options in format "kit":"representativeblock" |
+  | RepresentativeKitEmoji | 🍕 | This is the emoji-text that will be shown for every kit added to the request |
+  | SelectedKitEmoji | 🌏 | This is the emoji-text that will be shown at the sides of a selected kit |
+  | UnSelectedKitEmoji | 🧨 | This is the emoji-text that will be shown at the sides of a non selected kit |
