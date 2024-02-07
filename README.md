@@ -104,3 +104,5 @@ npm install
   | RepresentativeKitEmoji | 🍕 | This is the emoji-text that will be shown for every kit added to the request |
   | SelectedKitEmoji | 🌏 | This is the emoji-text that will be shown at the sides of a selected kit |
   | UnSelectedKitEmoji | 🧨 | This is the emoji-text that will be shown at the sides of a non selected kit |
+  
+  - ## The to-build structure
