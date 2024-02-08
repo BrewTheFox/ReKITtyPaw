@@ -42,5 +42,6 @@
     "KitsDict":{"KitOption1":"wither_skeleton_skull", "KitOption2":"detector_rail"},
     "RepresentativeKitEmoji":"🍕",
     "SelectedKitEmoji":"🌏",
-    "UnSelectedKitEmoji":"🧨"
+    "UnSelectedKitEmoji":"🧨",
+    "IsSlashKillAllowed":true
 }
