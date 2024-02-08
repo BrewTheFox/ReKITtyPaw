@@ -90,13 +90,18 @@ function initBot() {
   }
 
   async function Suicidio() {
-    const defaultMove = new Movements(bot); //Se crea un nuevo tipo de movimiento para el bot
-    defaultMove.blocksToAvoid.delete(mcData.blocksByName.lava.id); //Este movimiento no le tiene miedo a la lava
-    bot.pathfinder.setMovements(defaultMove);
-    bot.pathfinder.setGoal(
-      new GoalNear(LavaCoords[0], LavaCoords[1], LavaCoords[2], 2)
-    ); //Se mueve a la lava para matar al bot
-    ShouldBotBeKilled = false;
+    if (IsSlashKillAllowed == false) {
+      const defaultMove = new Movements(bot); //Se crea un nuevo tipo de movimiento para el bot
+      defaultMove.blocksToAvoid.delete(mcData.blocksByName.lava.id); //Este movimiento no le tiene miedo a la lava
+      bot.pathfinder.setMovements(defaultMove);
+      bot.pathfinder.setGoal(
+        new GoalNear(LavaCoords[0], LavaCoords[1], LavaCoords[2], 2)
+      ); //Se mueve a la lava para matar al bot
+      ShouldBotBeKilled = false;
+    } else {
+      bot.chat("/kill");
+      ShouldBotBeKilled = false;
+    }
   }
 
   async function QueueDelivery(items, usuario, RequestID) {
@@ -300,9 +305,9 @@ function initBot() {
         bot.chat("/home");
       }
     }
-    if (message.toString() == HomeMessage) {
+    if (message.toString() == HomeMessage && IsSlashKillAllowed == false) {
       if (ShouldBotBeKilled == true) {
-        Suicidio(CurrentDeliveryID);
+        Suicidio();
       }
     }
   });
