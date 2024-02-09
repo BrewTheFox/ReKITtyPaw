@@ -47,7 +47,7 @@
     "UnSelectedKitEmoji":"🧨",
     "IsSlashKillAllowed":true,
     "UserTryingToDeliverToBotError":"What are you doing??",
-    "ModalPlaceHolder":"PlaceHolder",
+    "ModalPlaceHolder":"Username...",
     "ModalLabel":"Input:",
     "ModalAskTitle":"What's your minecraft nickname"
 }
