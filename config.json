@@ -36,12 +36,18 @@
     "KitMenuOpenText":"Request your kit NwN ",
     "ServerRestartError":"We're sorry. Our Server restarted, please try filling the form again.",
     "MinecraftEmptyServerError":"Hey. you're not on the Minecraft Server.",
-    "NameAskMessage":"Now tell me. which one is your nickname?",
     "GenericError":"We're sorry. there was a problem handling your request.",
     "VoucherText":"Thank you for using Ranarchy delivery bot. Please wait some time for the bot to be available and delivers your kit.",
+    "VoucherTitle":"Thank You!",
+    "VoucherUserField":"Username:",
+    "VoucherKitField":"Kits:",
     "KitsDict":{"KitOption1":"wither_skeleton_skull", "KitOption2":"detector_rail"},
     "RepresentativeKitEmoji":"🍕",
     "SelectedKitEmoji":"🌏",
     "UnSelectedKitEmoji":"🧨",
-    "IsSlashKillAllowed":true
+    "IsSlashKillAllowed":true,
+    "UserTryingToDeliverToBotError":"What are you doing??",
+    "ModalPlaceHolder":"PlaceHolder",
+    "ModalLabel":"Input:"
+    "ModalAskTitle":"Now tell me. which one is your nickname?",
 }
