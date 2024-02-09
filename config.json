@@ -48,6 +48,6 @@
     "IsSlashKillAllowed":true,
     "UserTryingToDeliverToBotError":"What are you doing??",
     "ModalPlaceHolder":"PlaceHolder",
-    "ModalLabel":"Input:"
+    "ModalLabel":"Input:",
     "ModalAskTitle":"What's your minecraft nickname"
 }
