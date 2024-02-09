@@ -1,6 +1,9 @@
 const initBot = require("./bot");
 const { v4: uuidv4 } = require("uuid");
 const {
+  VoucherUserField,
+  VoucherKitField,
+  VoucherTitle,
   UserTryingToDeliverToBotError,
   UnSelectedKitEmoji,
   SelectedKitEmoji,
@@ -26,6 +29,8 @@ const {
   token,
   username,
   KitSelectionMenuTitle,
+  ModalPlaceHolder,
+  ModalLabel,
 } = require("./config.json");
 const {
   ModalBuilder,
@@ -501,10 +506,10 @@ client.on("interactionCreate", async (interaction) => {
       });
       let usernameinput = new TextInputBuilder()
         .setCustomId("Username")
-        .setPlaceholder("Test input")
+        .setPlaceholder(ModalPlaceHolder)
         .setRequired(true)
         .setStyle(TextInputStyle.Short)
-        .setLabel("Enter Input");
+        .setLabel(ModalLabel);
       modal.addComponents(new ActionRowBuilder().addComponents(usernameinput));
 
       usuarios = await initBot.ObtenerUsuariosEnLinea(); //Obtiene los usuarios que estan actualmente en el servidor
@@ -617,17 +622,17 @@ client.on("interactionCreate", async (interaction) => {
         KitsValues.push(Bindings[DiscordUserInfo[interaction.user.id].Kits[i]]);
       }
       EmbedKitEnviado = new EmbedBuilder() // El embed del voucher
-        .setTitle("Kit Enviado!")
+        .setTitle(VoucherTitle)
         .addFields({
           name: "-----------------------------------------------------------------------------------",
           value: " ",
         })
         .addFields({
-          name: "Usuario:",
+          name: VoucherUserField,
           value: interaction.fields.getTextInputValue("Username"),
           inline: true,
         })
-        .addFields({ name: "Kits:", value: NombreKits, inline: true })
+        .addFields({ name: VoucherKitField, value: NombreKits, inline: true })
         .addFields({ name: "ID:", value: uuid })
         .addFields({
           name: "-----------------------------------------------------------------------------------",
