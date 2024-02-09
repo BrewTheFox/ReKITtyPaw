@@ -312,7 +312,7 @@ function initBot() {
     }
   });
 
-  bot.on("whisper", (username, message) => {
+  bot.on("whisper", (username, _) => {
     if (username == BotOwner) {
       bot.chat("/home"); //Si la persona que envia el mensaje es el dueño se dirige al stash
     }
