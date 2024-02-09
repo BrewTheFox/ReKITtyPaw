@@ -12,7 +12,7 @@ const {
   KitsDict,
   VoucherText,
   GenericError,
-  NameAskMessage,
+  ModalAskTitle,
   MinecraftEmptyServerError,
   ServerRestartError,
   KitMenuOpenText,
@@ -502,7 +502,7 @@ client.on("interactionCreate", async (interaction) => {
       }
       let modal = new ModalBuilder({
         custom_id: interaction.user.id + "-prompt",
-        title: NameAskMessage,
+        title: ModalAskTitle,
       });
       let usernameinput = new TextInputBuilder()
         .setCustomId("Username")
