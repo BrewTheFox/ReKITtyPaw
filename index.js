@@ -1,6 +1,7 @@
 const initBot = require("./bot");
 const { v4: uuidv4 } = require("uuid");
 const {
+  UserTryingToDeliverToBotError,
   UnSelectedKitEmoji,
   SelectedKitEmoji,
   RepresentativeKitEmoji,
@@ -27,6 +28,8 @@ const {
   KitSelectionMenuTitle,
 } = require("./config.json");
 const {
+  ModalBuilder,
+  TextInputBuilder,
   Client,
   GatewayIntentBits,
   EmbedBuilder,
@@ -35,6 +38,7 @@ const {
   ButtonStyle,
   PermissionsBitField,
   StringSelectMenuBuilder,
+  TextInputStyle,
 } = require("discord.js");
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 // var request = require('request');
@@ -52,7 +56,7 @@ let DiscordUserInfo = {};
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`); //Muestra el usuario del bot cuando se loggea
 });
-Bindings = {}
+Bindings = {};
 const mcData = require("minecraft-data")(version); //Obtiene datos de la version de minecraft del archivo de configuracion
 for (i = 0; i < Object.keys(KitsDict).length; i++) {
   //Itera sobre cada key del diccionario que almacena los kits y su id de bloque
@@ -481,32 +485,32 @@ client.on("interactionCreate", async (interaction) => {
   if (interaction.customId == interaction.user.id + "-2") {
     //Handler del boton de enviar
     try {
-      usuarios = await initBot.ObtenerUsuariosEnLinea(); //Obtiene los usuarios que estan actualmente en el servidor
-      OpcionesMenu = new StringSelectMenuBuilder()
-        .setCustomId(interaction.user.id + "-prompt")
-        .setMinValues(1);
-
-      let row2 = new ActionRowBuilder().addComponents(OpcionesMenu);
-      for (var i = 0; i < Object.keys(usuarios).length; i++) {
-        //Itera sobre todos los usuarios
-        if (usuarios[Object.keys(usuarios)[i]].username != username) {
-          //Si el usuario es el del bot lo omite
-          OpcionesMenu.addOptions({
-            //Agrega la opcion del usuario al embed selector
-            label: usuarios[Object.keys(usuarios)[i]].username,
-            value: usuarios[Object.keys(usuarios)[i]].username,
-          });
-        }
-      }
-      if (Object.keys(usuarios).length >= 2) {
-        //Si hay mas de dos usuarios (El bot y alguien mas) envia el embed para preguntar cual es su nombre
+      if (DiscordUserInfo[interaction.user.id] == undefined) {
         await interaction.update({
           embeds: [
-            new EmbedBuilder().setTitle(NameAskMessage).setColor("Green"),
+            new EmbedBuilder().setTitle(ServerRestartError).setColor("Red"),
           ],
-          components: [row2],
           ephemeral: true,
+          components: [],
         });
+        return;
+      }
+      let modal = new ModalBuilder({
+        custom_id: interaction.user.id + "-prompt",
+        title: NameAskMessage,
+      });
+      let usernameinput = new TextInputBuilder()
+        .setCustomId("Username")
+        .setPlaceholder("Test input")
+        .setRequired(true)
+        .setStyle(TextInputStyle.Short)
+        .setLabel("Enter Input");
+      modal.addComponents(new ActionRowBuilder().addComponents(usernameinput));
+
+      usuarios = await initBot.ObtenerUsuariosEnLinea(); //Obtiene los usuarios que estan actualmente en el servidor
+      if (Object.keys(usuarios).length >= 2) {
+        //Si hay mas de dos usuarios (El bot y alguien mas) envia el embed para preguntar cual es su nombre
+        await interaction.showModal(modal);
       } else {
         //Si no retorna el mensaje de servidor vacio
         await DiscordUserInfo[interaction.user.id].interaccion.deleteReply();
@@ -520,10 +524,14 @@ client.on("interactionCreate", async (interaction) => {
         });
         return;
       }
-    } catch {
+    } catch (e) {
       //En caso de error se asume que el servidor se cerro
+      console.log(e);
       await interaction.reply({
-        embeds: new EmbedBuilder().setTitle(ServerRestartError).setColor("Red"),
+        embeds: [
+          new EmbedBuilder().setTitle(ServerRestartError).setColor("Red"),
+        ],
+        ephemeral: true,
       });
     }
   }
@@ -556,6 +564,45 @@ client.on("interactionCreate", async (interaction) => {
   if (interaction.customId == interaction.user.id + "-prompt") {
     //Recibe la respuesta del usuario al seleccionar su usuario
     try {
+      let UsernameFound = false;
+      usuarios = await initBot.ObtenerUsuariosEnLinea(); //Obtiene los usuarios que estan actualmente en el servidor
+      if (
+        interaction.fields.getTextInputValue("Username").toLowerCase() ==
+        username.toLowerCase()
+      ) {
+        interaction.update({
+          embeds: [
+            new EmbedBuilder()
+              .setTitle(UserTryingToDeliverToBotError)
+              .setColor("Red"),
+          ],
+          components: [],
+          ephemeral: true,
+        });
+        DiscordUserInfo[interaction.user.id] = undefined;
+        return;
+      }
+      for (var i = 0; i < Object.keys(usuarios).length; i++) {
+        if (
+          Object.keys(usuarios)[i] ==
+          interaction.fields.getTextInputValue("Username")
+        ) {
+          UsernameFound = true;
+          break;
+        }
+      }
+      if (UsernameFound == false) {
+        await interaction.update({
+          embeds: [
+            new EmbedBuilder()
+              .setTitle(MinecraftEmptyServerError)
+              .setColor("Red"),
+          ],
+          components: [],
+          ephemeral: true,
+        });
+        return;
+      }
       const uuid = uuidv4();
       var NombreKits = "";
       var KitsValues = [];
@@ -577,7 +624,7 @@ client.on("interactionCreate", async (interaction) => {
         })
         .addFields({
           name: "Usuario:",
-          value: interaction.values[0],
+          value: interaction.fields.getTextInputValue("Username"),
           inline: true,
         })
         .addFields({ name: "Kits:", value: NombreKits, inline: true })
@@ -591,10 +638,16 @@ client.on("interactionCreate", async (interaction) => {
         .setFooter({ text: "Hecho con amor por: @HomeBrewerFox" });
       await interaction.reply({ embeds: [EmbedKitEnviado], ephemeral: true });
       await DiscordUserInfo[interaction.user.id].interaccion.deleteReply();
-      initBot.QueueDelivery(KitsValues, interaction.values[0], uuid); //Se envia el kit a la cola de envios pendientes
-    } catch {
+      initBot.QueueDelivery(
+        KitsValues,
+        interaction.fields.getTextInputValue("Username"),
+        uuid
+      ); //Se envia el kit a la cola de envios pendientes
+    } catch (e) {
+      console.log(e);
       interaction.reply({
         embeds: [new EmbedBuilder().setTitle(GenericError).setColor("Red")],
+        ephemeral: true,
       });
     }
   }
