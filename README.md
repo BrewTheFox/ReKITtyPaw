@@ -100,7 +100,7 @@ npm install
   | NameAskMessage | Now tell me. which one is your nickname? | The discord embed title of the name ask menu |
   | GenericError | We're sorry. there was a problem handling your request. | A Generic error that the discord bot will send when the error is unknown |
   | VoucherText | Thank you for using Ranarchy delivery bot. Please wait some time for the bot to be available and delivers your kit. | The discord text that will be sent on the voucher |
-  | VoucherTitle | Thank You! |  |
+  | VoucherTitle | Thank You! | The title that shows up on the voucher after a kit request. |
   | VoucherUserField | Username: |  |
   | VoucherKitField | Kits: |  |
   | KitsDict | {"KitOption1":"wither_skeleton_skull", "KitOption2":"detector_rail"} | A dictionary that contains the kit options in format "kit":"representativeblock" |
