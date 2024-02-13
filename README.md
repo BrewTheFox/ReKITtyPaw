@@ -101,15 +101,15 @@ npm install
   | GenericError | We're sorry. there was a problem handling your request. | A Generic error that the discord bot will send when the error is unknown |
   | VoucherText | Thank you for using Ranarchy delivery bot. Please wait some time for the bot to be available and delivers your kit. | The discord text that will be sent on the voucher |
   | VoucherTitle | Thank You! | The title that shows up on the voucher after a kit request. |
-  | VoucherUserField | Username: |  |
-  | VoucherKitField | Kits: |  |
+  | VoucherUserField | Username: | The text that is over the username of the player. |
+  | VoucherKitField | Kits: | The text that is over the selected kits. |
   | KitsDict | {"KitOption1":"wither_skeleton_skull", "KitOption2":"detector_rail"} | A dictionary that contains the kit options in format "kit":"representativeblock" |
   | RepresentativeKitEmoji | 🍕 | This is the emoji-text that will be shown for every kit added to the request |
   | SelectedKitEmoji | 🌏 | This is the emoji-text that will be shown at the sides of a selected kit |
   | UnSelectedKitEmoji | 🧨 | This is the emoji-text that will be shown at the sides of a non selected kit |
-  | IsSlashKillAllowed | true |  |
-  | UserTryingToDeliverToBotError | What are you doing?? |  |
-  | ModalPlaceHolder | Username... |  |
+  | IsSlashKillAllowed | true | This should be true if you can use /kill on the server |
+  | UserTryingToDeliverToBotError | What are you doing?? | This is the error that shows up when a user tries to send a kit to the bot |
+  | ModalPlaceHolder | Username... | This is the placeholder of the modal input |
   | ModalLabel | Input: |  |
   | ModalAskTitle | What's your minecraft nickname |  |
   - ## The to-build structure
