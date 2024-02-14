@@ -110,7 +110,7 @@ npm install
   | IsSlashKillAllowed | true | This should be true if you can use /kill on the server |
   | UserTryingToDeliverToBotError | What are you doing?? | This is the error that shows up when a user tries to send a kit to the bot |
   | ModalPlaceHolder | Username... | This is the placeholder of the modal input |
-  | ModalLabel | Input: |  |
-  | ModalAskTitle | What's your minecraft nickname |  |
+  | ModalLabel | Input: | This is the label that goes over the input |
+  | ModalAskTitle | What's your minecraft nickname | This is the title of the modal |
   - ## The to-build structure
     
