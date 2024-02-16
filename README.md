@@ -113,4 +113,6 @@ npm install
   | ModalLabel | Input: | This is the label that goes over the input |
   | ModalAskTitle | What's your minecraft nickname | This is the title of the modal |
   - ## The to-build structure
-    
+  <p align="center">
+    <img src="https://github.com/BrewTheFox/ReKITtyPaw/blob/main/images/240215_18h09m42s_screenshot.png?raw=true" alt="Structure" width="100%">
+  </p>
