@@ -111,7 +111,7 @@ npm install
   | UserTryingToDeliverToBotError | What are you doing?? | This is the error that shows up when a user tries to send a kit to the bot |
   | ModalPlaceHolder | Username... | This is the placeholder of the modal input |
   | ModalLabel | Input: | This is the label that goes over the input |
-  | ModalAskTitle | What's your minecraft nickname | This is the title of the modal |
+  | ModalAskTitle | What's your minecraft nickname | This is the title of the modal. |
   - ## The to-build structure
   <p align="center">
     <img src="https://github.com/BrewTheFox/ReKITtyPaw/blob/main/images/240215_18h09m42s_screenshot.png?raw=true" alt="Structure" width="100%">
