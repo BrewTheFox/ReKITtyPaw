@@ -117,4 +117,4 @@ npm install
     <img src="https://github.com/BrewTheFox/ReKITtyPaw/blob/main/images/240215_18h09m42s_screenshot.png?raw=true" alt="Structure" width="100%">
   </p>
   
-  #### As you can see there are two main things here, a double chest and a marker block, the marker block is pointing at KitOption1, so when the user selects KitOption1 the bot will go to the wither skelleton skull an then the bot will open the chest. So you should put the KitsDict value as {"KitName":"wither_skeleton_skull"} for the structure to be detected.
+  #### As you can see there are two main things here, a double chest and a marker block, the marker block is pointing at KitOption1, so when the user selects KitOption1 the bot will go to the wither skelleton skull an then the bot will open the chest. So you should put the KitsDict value as {"KitName":"representative_block"} for the structure to be detected.
