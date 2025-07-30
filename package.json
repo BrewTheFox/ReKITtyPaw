@@ -4,7 +4,7 @@
     "@tensorflow/tfjs-converter": "^4.15.0",
     "@tensorflow/tfjs-node": "^4.15.0",
     "@u4/opencv4nodejs": "^6.5.2",
-    "discord.js": "^14.14.1",
+    "discord.js": "^14.21.0",
     "dotenv": "^16.0.3",
     "mineflayer": "^4.8.0",
     "mineflayer-armor-manager": "^1.4.2",
