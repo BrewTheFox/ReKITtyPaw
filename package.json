@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@azure/msal-node": "^2.6.0",
+    "@azure/msal-node": "^2.16.2",
     "@tensorflow/tfjs-converter": "^4.15.0",
     "@tensorflow/tfjs-node": "^4.15.0",
     "@u4/opencv4nodejs": "^6.5.2",
