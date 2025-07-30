@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@azure/msal-node": "^2.6.0",
-    "@tensorflow/tfjs-converter": "^4.15.0",
+    "@tensorflow/tfjs-converter": "^4.22.0",
     "@tensorflow/tfjs-node": "^4.15.0",
     "@u4/opencv4nodejs": "^6.5.2",
     "discord.js": "^14.14.1",
