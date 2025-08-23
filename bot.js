@@ -24,65 +24,104 @@ const {
   HomeCancelMSG,
   AfterRegisterMSG,
   AfterLoginMSG,
+  PlayPremium,
+  auth,
+  MinecraftAccountPassword, 
+  MinecraftAccountEmail
 } = require("./config.json");
+const fs = require('fs');
 const { GoalNear } = require("mineflayer-pathfinder").goals;
 console.log("[Console] Creating bot.");
-let isBotBussy = false;
+let isBotBusy = false;
 QueueItems = {};
 CurrentDeliveryID = "";
 const { pathfinder, Movements, goals } = require("mineflayer-pathfinder");
-const mineflayerViewer = require("prismarine-viewer").mineflayer;
 const GoalBlock = goals.GoalBlock;
 let ShouldBotBeKilled = false;
 vec3 = require("vec3");
+let botArgs;
+let session;
 
-// Argumentos del bot.
-const botArgs = {
-  host: host, //IP del servidor
-  port: port, // Puerto del servidor
-  username: username, //Usuario del bot
-  version: version, //Version del servidor
-};
+if (fs.existsSync("./accounts/accounts.json")){ //Checks if the path for weird cookie auth exists
+  const Auth = require('./accounts/accounts.json');
+  session = {
+    accessToken: Auth[1].accessToken,
+    clientToken: Auth[1].clientToken,
+    selectedProfile: {
+        id: Auth[1].selectedUser.profile,
+        name: Auth[1].displayName
+    }
+  };
+}
+
+// Bot Connection ARGS (Can be set from the config.json file)
+if (!session){ // I always expect this...
+  if (!PlayPremium) {
+    botArgs = {
+      host: host, //Server's IP
+      port: port, // Server's port
+      username: username, //Bot's username
+      version: version, //Server's version
+    };
+  }
+  else {
+    botArgs = {
+      host: host, //Server's IP
+      port: port, // Server's port
+      username: MinecraftAccountEmail, //Bot's Email
+      version: version, //Server's version
+      auth: auth, // Auth kind
+      password: MinecraftAccountPassword // Account password email
+    };
+  }
+}
+else { // If there's a shady session then we try to connect to it
+  botArgs = {
+    host:host,
+    port:port,
+    version:version
+  }
+  botArgs["session"] = session
+}
 
 function initBot() {
-  //Inicio bot
   let bot = mineflayer.createBot(botArgs);
   bot.loadPlugin(pathfinder);
   const mcData = require("minecraft-data")(bot.version);
   async function ObtenerUsuariosEnLinea() {
-    //Funcion para acceder de forma externa
+    //Exports the players for them to be used in other functions
     return bot.players;
   }
 
   async function expulsar() {
     await new Promise((resolve) => setTimeout(resolve, TPDelay));
     if (IsSlashKillAllowed == false) {
-      //Si el /kill esta desabilitado
+      //Logic used if /kill is disabled
       itemindex = 0;
-      cantidaditems = bot.inventory.items().length; //Obtiene la cantidad de items en el inventario
+      cantidaditems = bot.inventory.items().length; //Gets the ammount of items in the bot's inventory
       for (var i = 0; i < cantidaditems; i++) {
         //Por cada item que tenga en el inventario:
-        await new Promise((resolve) => setTimeout(resolve, 500)); //Delay de 0.5 segundos
-        const playerFilter = (entity) => entity.type === "player"; //Busca un jugador para mirarlo
+        await new Promise((resolve) => setTimeout(resolve, 500)); //0.5 seconds delay
+        const playerFilter = (entity) => entity.type === "player"; //Searches a player to look at
         let player = bot.nearestEntity(playerFilter);
         if (player) {
           bot.lookAt(player.position.offset(0, player.height, 0));
         }
         if (bot.inventory.items()[itemindex] != undefined) {
-          //Si el item con el indice actual existe en el inventario
+          //If there's an item in the invenory index
           if (bot.inventory.items()[itemindex].count == 1) {
             try {
-              item = bot.inventory.items()[itemindex].slot; //Obtiene el slot del item
-              bot.clickWindow(item, 0, 4); //Con las apis de bajo nivel tira el item utilizando el slot
+              item = bot.inventory.items()[itemindex].slot; //Get the item's slot
+              bot.clickWindow(item, 0, 4); //Throws the item by using some low level apis
             } catch {
               continue;
             }
           } else {
-            itemindex++; //Se suma uno al indice para el siguiente item, asi por todos los items
+            itemindex++; // Adds 1 for each item index
           }
         }
       }
-      bot.chat("/home"); //Se envia el comando Home para retornar a base, se espera un timeout
+      bot.chat("/home"); //This sends the bot back home, waiting a timeout
       await new Promise((resolve) => setTimeout(resolve, HomeDelay));
     } else {
       bot.chat("/kill");
@@ -91,12 +130,12 @@ function initBot() {
 
   async function Suicidio() {
     if (IsSlashKillAllowed == false) {
-      const defaultMove = new Movements(bot); //Se crea un nuevo tipo de movimiento para el bot
-      defaultMove.blocksToAvoid.delete(mcData.blocksByName.lava.id); //Este movimiento no le tiene miedo a la lava
+      const defaultMove = new Movements(bot); //Starts a new movements object for the bot
+      defaultMove.blocksToAvoid.delete(mcData.blocksByName.lava.id); //Let's kill ourselves :3
       bot.pathfinder.setMovements(defaultMove);
       bot.pathfinder.setGoal(
         new GoalNear(LavaCoords[0], LavaCoords[1], LavaCoords[2], 2)
-      ); //Se mueve a la lava para matar al bot
+      ); //Jump to the lava and die! hehehe
       ShouldBotBeKilled = false;
     } else {
       bot.chat("/kill");
@@ -105,34 +144,33 @@ function initBot() {
   }
 
   async function QueueDelivery(items, usuario, RequestID) {
-    //Funcion accesada remotamente, agrega datos a una lista, contiene el usuario y un array de items
+    //This is accessed externally and contains an array with the user and the Items of the request
     QueueItems[RequestID] = { Usuario: usuario, Items: items };
   }
 
-  function setBussyStatus(estado) {
-    isBotBussy = estado; //Esta funcion no es necesaria, pero la preferi porque daba errores al simplemente hacerlo de forma externa
-  }
+  function setBusyStatus(estado) {
+    isBotBusy = estado; //This wasn't necessary buuut I'd rather to have it here because I wanted to avoid some external problems
 
   function HandleDelivery() {
-    if (Object.keys(QueueItems).length > 0 && isBotBussy == false) {
-      //Si el bot no esta ocupado en otro envio y la cola de items es mayor que 0 envia el delivery y lo pone como envio actual
+    if (Object.keys(QueueItems).length > 0 && isBotBusy == false) {
+      //If the bot is not busy and the queue is zero then send the delivery
       SendDelivery(
         QueueItems[Object.keys(QueueItems)[0]].Items,
         QueueItems[Object.keys(QueueItems)[0]].Usuario,
         Object.keys(QueueItems)[0]
       );
-      CurrentDeliveryID = Object.keys(QueueItems)[0]; //Se pone el id del delivery como el actual
+      CurrentDeliveryID = Object.keys(QueueItems)[0]; //The delivery is put as current
     }
   }
   async function SendDelivery(identificador, usuario, RequestID) {
-    setBussyStatus(true); //Pone el bot en estado ocupado
+    setBusyStatus(true); //Sets the bot in busy state
     bot.once("death", () => {
-      //Cuando el bot muera reestablece valores importantes para evitar bugs, el once hace que solo se ejecute una vez y no sea constante
+      //When the bot dies it restarts some values
       ShouldBotBeKilled = false;
       delete QueueItems[RequestID];
-      setBussyStatus(false);
+      setBusyStatus(false);
     });
-    const movements = new Movements(bot, mcData); //Crea movimientos, pero esta vez con bloques que no se deben romper
+    const movements = new Movements(bot, mcData); //This creates movements, but with blocks that should not be broken
     movements.blocksCantBreak.add(mcData.blocksByName.diamond_block.id);
     movements.blocksCantBreak.add(mcData.blocksByName.sandstone.id);
     movements.blocksCantBreak.add(mcData.blocksByName.wither_skeleton_skull.id);
@@ -141,17 +179,17 @@ function initBot() {
     movements.blocksCantBreak.add(mcData.blocksByName.glass.id);
     movements.blocksCantBreak.add(mcData.blocksByName.beacon.id);
     movements.scafoldingBlocks = [];
-    bot.pathfinder.setMovements(movements); //Adopta el movimiento
-    ShouldBotBeKilled = true; //El bot a partir de aqui debe de suicidarse si o si
+    bot.pathfinder.setMovements(movements); // Adds the movements to the pathfinder
+    ShouldBotBeKilled = true; //Here starts the downhill, the path of kys
     for (var i = 0; i < identificador.length; i++) {
-      const Skull = bot.findBlock({
-        //Skull es el bloque kit que buscamos, entonces se va a dirigir a el bloque
+      const KitBlock = bot.findBlock({
+        //KitBlock is the representative block of the kit we're searching for
         matching: identificador[i],
         maxDistance: 128,
       });
 
-      if (!Skull) {
-        //En caso de que no encuentre el bloque va a cancelar el envio y va a enviar un mensaje
+      if (!KitBlock) {
+        //If the block is not found then a message will be sent to the user
         bot.chat(
           "/msg " +
             usuario +
@@ -163,24 +201,24 @@ function initBot() {
         );
         ShouldBotBeKilled = false;
         delete QueueItems[RequestID];
-        setBussyStatus(false);
+        setBusyStatus(false);
         return;
       }
 
-      //En caso de que si la encuentre se va a dirijir
-      var x = Skull.position.x;
-      var y = Skull.position.y;
-      var z = Skull.position.z + 1;
+      //If it is found then the bot is going to search them
+      var x = KitBlock.position.x;
+      var y = KitBlock.position.y;
+      var z = KitBlock.position.z + 1;
       var goal = new GoalBlock(x, y, z);
       await bot.pathfinder.goto(goal);
       const chest = bot.findBlock({
-        //Encuentra un cofre que tiene que estar al lado del bloque representativo del kit
+        //Finds the lateral chest of the representative block
         matching: mcData.blocksByName.chest.id,
         maxDistance: 2,
       });
 
       if (!chest) {
-        //Si no lo encuentra cancela el envio
+        //If the chest is not found then the delivery is cancelled
         bot.chat(
           "/msg " +
             usuario +
@@ -192,15 +230,15 @@ function initBot() {
         );
         ShouldBotBeKilled = false;
         delete QueueItems[RequestID];
-        setBussyStatus(false);
+        setBusyStatus(false);
         return;
       }
       var x = chest.position.x;
       var y = chest.position.y;
       var z = chest.position.z;
-      let chest_window = await bot.openChest(bot.blockAt(vec3(x, y, z))); //Abre el cofre que acaba de localizar
-      items = chest_window.containerItems(); //Obtiene los items
-      if (items.length == 0) {
+      let chest_window = await bot.openChest(bot.blockAt(vec3(x, y, z))); //The chest is opened
+      items = chest_window.containerItems(); //Gets the items inside the chest
+      if (items.length == 0) { //If there are not kits inside the chest a message will be sent to the user
         await new Promise((resolve) => setTimeout(resolve, 2000));
         bot.chat(
           "/msg " +
@@ -210,21 +248,21 @@ function initBot() {
               "{{RequestID}}",
               RequestID
             ).replaceAll("{{User}}", usuario)
-        ); //Si no hay items envia un mensaje que dice que no esta en stock
+        );
         bot.closeWindow(chest_window);
       } else {
-        //En caso de que si encuentre el kit lo va a sacar del cofre
+        //If items are found in the chest then they are going to be withdrawn
         await chest_window.withdraw(items[0].type, null, 1);
         bot.closeWindow(chest_window);
         index = 1;
-        await new Promise((resolve) => setTimeout(resolve, 2000)); //Espera 2 segundos para recoger el item
+        await new Promise((resolve) => setTimeout(resolve, 2000)); //Waits 2 seconds to take the item
         while (bot.inventory.items().length == 0) {
           await new Promise((resolve) => setTimeout(resolve, 100));
           index = index + 1;
         }
       }
     }
-    await new Promise((resolve) => setTimeout(resolve, 2000)); //Delay de 2 segundos antes de enviar tp
+    await new Promise((resolve) => setTimeout(resolve, 2000)); //2 second delay before sending the tp request
     bot.chat(
       "/msg " +
         usuario +
@@ -233,10 +271,10 @@ function initBot() {
           .replaceAll("{{User}}", usuario)
           .replaceAll("{{TPAcceptTime}}", TPAcceptTime / 1000)
     );
-    bot.chat("/tpa " + usuario); //Envia tp
+    bot.chat("/tpa " + usuario); //Sends the request
     let teleportAccepted = false;
     timeoutId = setTimeout(() => {
-      //Si pasa TPAcceptTime y el usuario no acepta tp se cancela y el bot se suicida
+      // After the time specified in TPAcceptTime passes the tp request gets cancelled and the bot opts for killing himself :3
       bot.chat(
         "/msg " +
           usuario +
@@ -250,7 +288,7 @@ function initBot() {
       if (ShouldBotBeKilled) {
         Suicidio();
       }
-      timeoutId = null; // Para indicar que el timeout ya se ha ejecutado
+      timeoutId = null; // This just tells that the timeout has executed
     }, TPAcceptTime);
 
     bot.on("message", (message) => {
@@ -258,49 +296,48 @@ function initBot() {
         message == UTPAcceptMSG.replaceAll("{{User}}", usuario) &&
         !teleportAccepted
       ) {
-        //Si el usuario acepta la solicitud de teletransporte
+        //If the user accepts the request then
         teleportAccepted = true;
         expulsar();
-        clearTimeout(timeoutId); //Elimina el temporizador de 10sg para aceptar
-        return "[OK] El delivery se completo sin ningun percance"; //Acaba la funcion
+        clearTimeout(timeoutId); //The timeout is cleared
+        return "[OK] El delivery se completo sin ningun percance"; // Perfect status
       }
 
       if (message == UTPCancelMSG.replaceAll("{{User}}", usuario)) {
-        //Si el usuario rechaza
+        //If the request is cancelled
         if (ShouldBotBeKilled) {
-          Suicidio(); //Mata el bot
+          Suicidio(); //We take the suicide path again (this shit is comical)
         }
         ShouldBotBeKilled = false;
         delete QueueItems[RequestID];
-        setBussyStatus(false);
+        setBusyStatus(false);
         clearTimeout(timeoutId);
         return "[X]" + usuario + " Cancelo la solicitud";
       }
     });
   }
 
-  // Carga mineflayer
+  // Loads mineflayer
 
   bot.once("spawn", () => {
-    mineflayerViewer(bot, { port: 8080, firstPerson: true });
-    setInterval(HandleDelivery, 2000); //Ejecuta la funcion que se encarga de verificar los envios cada 2 segundos
+    setInterval(HandleDelivery, 2000); //Starts the function to handle the deliveries each 2 seconds
   });
 
   bot.on("message", (message) => {
     // logs login
     console.log(message.toString());
     if (message.toString() === LoginMSG) {
-      bot.chat(`/login ` + password); //Inicia sesion
+      bot.chat(`/login ` + password); //Logs in
     }
     if (message.toString() === RegisterMSG) {
-      bot.chat(`/register ` + password + " " + password); //Registra el bot
+      bot.chat(`/register ` + password + " " + password); //Registers if necessary
     }
     if (message.toString() === AfterLoginMSG) {
     } // Bot has joined the server
     if (message.toString() === AfterRegisterMSG) {
     }
     if (message.toString() == HomeCancelMSG) {
-      //Si la peticion de teletransporte se cancela
+      //If the tp request is cancelled
       if (ShouldBotBeKilled == true) {
         bot.chat("/home");
       }
@@ -314,19 +351,20 @@ function initBot() {
 
   bot.on("whisper", (username, _) => {
     if (username == BotOwner) {
-      bot.chat("/home"); //Si la persona que envia el mensaje es el dueño se dirige al stash
+      bot.chat("/home"); //if the bot's owner wants it in the stash
     }
   });
 
   bot.on("end", () => {
-    // RECONECTAR POR SI BOT ES KICKEADO
+    // Reconnects if the bot gets kicked
     setTimeout(initBot, 5000); // reconnect
   });
 
   bot.on("error", (err) => {
     console.log(`Unhandled error: ${err}`);
   });
-  module.exports.QueueDelivery = QueueDelivery; // Se exportan modulos para su futuro acceso desde Index.js
+  module.exports.QueueDelivery = QueueDelivery; // Exports the modules for future access in index.js
   module.exports.ObtenerUsuariosEnLinea = ObtenerUsuariosEnLinea;
+}
 }
 module.exports = initBot;

@@ -61,8 +61,13 @@ npm install
   | **Keyword** | **Content** | **Usage** |
   |---|---|---|
   | token | havfYeMZVkMmAfz0TiNmyFYcGk19rdSG1xV11NP2Cp8yP6pygeQndRLSyNezpCz0T9Y2BpDm3JwNUrFcUhuNtVVwzP3d2Rzwe6uw | This is your discord bot token |
-  | username | MyNameIsBot | Bot's minecraft username |
+  | ClientID | 51884441 | |Bot's client ID|
+  | username | MyNameIsBot | Bot's minecraft username or Microsoft email |
   | password | ThisIsMyPassword | If the server needs authentication here is where you should put the bot password |
+  | PlayPremium | false | It is false because we're not using a premium account|
+  | auth | microsoft | Microsoft because I think mojang is no longer available |
+  | MinecraftAccountEmail | this@ismyemail.com | Microsoft email of the account that we're log in|
+  | MinecraftAccountPassword | thisismymicrosoftpassword | Microsoft account's password|
   | host | RandomAnarchyServer.net | The minecraft server IP Address |
   | port | 12345 | The minecraft server port |
   | version | 1.18.1 | The minecraft server version |
@@ -118,3 +123,7 @@ npm install
   </p>
   
   #### As you can see there are two main things here, a double chest and a marker block, the marker block is pointing at KitOption1, so when the user selects KitOption1 the bot will go to the wither skelleton skull an then the bot will open the chest. So you should put the KitsDict value as {"KitName":"representative_block"} so the structure can be detected.
+
+## Special thanks to:
+  - ### Zerordia0 for originally developing the bot
+  - ### [Smol-Hanako](https://github.com/Smol-Hanako) for helping me make this work again by providing me with the deploy-commands.js file, reminding me that this project existed, asking me to translate the comments and giving me the idea to implement premium authentication to the bot :3.
