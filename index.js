@@ -1,4 +1,5 @@
 const initBot = require("./bot");
+const deployCmds = require("./deploy-command")
 const { v4: uuidv4 } = require("uuid");
 const {
   VoucherUserField,
@@ -42,13 +43,12 @@ const {
   ActionRowBuilder,
   ButtonStyle,
   PermissionsBitField,
-  StringSelectMenuBuilder,
   TextInputStyle,
+  MessageFlags,
 } = require("discord.js");
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-// var request = require('request');
 
-let row = new ActionRowBuilder(); //Se encarga del boton para abrir el selector de kits
+let row = new ActionRowBuilder(); //This just generates the kit's selection button
 row.addComponents(
   new ButtonBuilder()
     .setCustomId("ShowMenu")
@@ -58,39 +58,38 @@ row.addComponents(
 
 let DiscordUserInfo = {};
 
-client.on("ready", () => {
-  console.log(`Logged in as ${client.user.tag}!`); //Muestra el usuario del bot cuando se loggea
+client.on("clientReady", () => {
+  console.log(`Logged in as ${client.user.tag}!`); //Shows the bot's username when logged in (to discord)
+  deployCmds.UpdateCommands()
 });
 Bindings = {};
-const mcData = require("minecraft-data")(version); //Obtiene datos de la version de minecraft del archivo de configuracion
+const mcData = require("minecraft-data")(version); //Gets the minecraft version from the config file
 for (i = 0; i < Object.keys(KitsDict).length; i++) {
-  //Itera sobre cada key del diccionario que almacena los kits y su id de bloque
+  //Iterates over the kit's bindings dict
   Bindings[Object.keys(KitsDict)[i]] =
-    mcData.blocksByName[KitsDict[Object.keys(KitsDict)[i]]].id; //Convierte el bloque que esta en texto a un id que pueda reconocer el pathfinder
+    mcData.blocksByName[KitsDict[Object.keys(KitsDict)[i]]].id; //Block name to ID for the pathfinder to know
 }
 
-async function no_se() {
-  await new Promise((resolve) => setTimeout(resolve, 2000)); //Espera 2 segundos de carga
+async function wait_for_load() {
+  await new Promise((resolve) => setTimeout(resolve, 2000)); //Waits 2 seconds for the bot to load
 }
-no_se();
-client.login(token); //Inicia sesion el bot de discord
+wait_for_load();
+client.login(token); //Log in to discord
 
+//Refresh embed function
 async function refrescar(id, interaccion) {
-  let row2 = new ActionRowBuilder(); //Crea un nuevo row en el que van a ir las acciones
+  let row2 = new ActionRowBuilder(); //This creates a new row for the buttons
   EmbedMenu = new EmbedBuilder()
     .setTitle(KitSelectionMenuTitle)
-    .setColor("Random")
-    .setFooter({
-      text: "Hecho con amor por:                                      @HomeBrewerFox",
-    });
+    .setColor("Random");
   const repeticiones = {};
   DiscordUserInfo[id].Kits.forEach((numero) => {
-    //Obtiene cuantas veces se ha seleccionado cada kit.
+    //How many times a kit has been selected
     repeticiones[numero] = (repeticiones[numero] || 0) + 1;
   });
 
   row2.addComponents(
-    //Boton para cambiar subir un indice
+    //Button to change an index
     new ButtonBuilder()
       .setCustomId(id + "-0")
       .setLabel("⬆️")
@@ -98,7 +97,7 @@ async function refrescar(id, interaccion) {
   );
 
   if (DiscordUserInfo[id].Kits.length >= MaxDeliverKits) {
-    //Boton para agregar kits, verifica si ya se ha llegado al maximo interpuesto por el usuario, y si es asi lo desactiva
+    //Button to add kits (verifies if a maximum ammount has been reached)
     row2.addComponents(
       new ButtonBuilder()
         .setCustomId(id + "-1")
@@ -107,7 +106,7 @@ async function refrescar(id, interaccion) {
         .setStyle(ButtonStyle.Primary)
     );
   } else {
-    //En caso de que no tengas el maximo de kits el boton va a estar activo
+    //If we don't have the maximum ammount of kits then the button is enabled
     row2.addComponents(
       new ButtonBuilder()
         .setCustomId(id + "-1")
@@ -117,7 +116,7 @@ async function refrescar(id, interaccion) {
   }
 
   if (DiscordUserInfo[id].Kits.length < 1) {
-    //Boton de enviar, si no tienes mas de un kit esta desactivado
+    //Send button, If less than 1 kit is selected then it is disabled
     row2.addComponents(
       new ButtonBuilder()
         .setCustomId(id + "-2")
@@ -126,7 +125,7 @@ async function refrescar(id, interaccion) {
         .setStyle(ButtonStyle.Success)
     );
   } else {
-    //Esta activado porque hay un kit o mas
+    //Enabled because 1 or more kits
     row2.addComponents(
       new ButtonBuilder()
         .setCustomId(id + "-2")
@@ -137,7 +136,7 @@ async function refrescar(id, interaccion) {
   if (
     repeticiones[Object.keys(Bindings)[DiscordUserInfo[id].index]] == undefined
   ) {
-    //Si el usuario no tiene un kit del tipo en el que esta su indice no puede eliminarlo, por lo que el boton de resta esta desactivado
+    //If the user has a kit that it's selected by index then they can remove it, in this case he does not, so it is disabled
     row2.addComponents(
       new ButtonBuilder()
         .setCustomId(id + "-3")
@@ -146,7 +145,7 @@ async function refrescar(id, interaccion) {
         .setStyle(ButtonStyle.Danger)
     );
   } else {
-    //Y si lo tiene el boton esta activado
+    //If he does then this is enabled
     row2.addComponents(
       new ButtonBuilder()
         .setCustomId(id + "-3")
@@ -156,7 +155,7 @@ async function refrescar(id, interaccion) {
   }
 
   row2.addComponents(
-    //Boton para cambiar bajar un indice
+    //Move an index down
     new ButtonBuilder()
       .setCustomId(id + "-4")
       .setLabel("⬇️")
@@ -165,42 +164,42 @@ async function refrescar(id, interaccion) {
 
   Object.keys(Bindings).forEach((key, index) => {
     if (index == DiscordUserInfo[id].index) {
-      //Si el indice es en el que esta el usuario actualmente
+      //If this is the user's selected index
       if (repeticiones[key] != undefined) {
-        //Si existe almenos un kit del tipo actual
+        //If there's atleast one kit of the selected kind
         Cantidad = "";
         for (var i = 0; i < repeticiones[key]; i++) {
-          Cantidad = Cantidad + RepresentativeKitEmoji; //Por cada kit del tipo en el que este iterando actualmente añade un emoji representativo
+          Cantidad = Cantidad + RepresentativeKitEmoji; //For each kit the bot adds a representative emoji
         }
         EmbedMenu.addFields({
-          name: SelectedKitEmoji + key + SelectedKitEmoji, //Graficamente le muestra al usuario el kit que esta seleccionado actualmente
+          name: SelectedKitEmoji + key + SelectedKitEmoji, //Shows graphically what kit is selected rn
           value: " " + Cantidad,
         });
       } else {
-        //Si no existe ningun kit del tipo actual
+        //If there's no kit of the kind already selected
         EmbedMenu.addFields({
-          name: SelectedKitEmoji + key + SelectedKitEmoji, //Solamente le muestra graficamente que no tiene ningun kit de este tipo seleccionado
+          name: SelectedKitEmoji + key + SelectedKitEmoji, //Shows the user that there's no kit from this kind selected
           value: " ",
         });
       }
     } else {
-      //Si el indice no es en el que esta el usuario actualmente
+      //If the user isn't in this index
       if (repeticiones[key] != undefined) {
-        // Y tiene kits seleccionados de este tipo
+        // And has kits from this kind selected
         Cantidad = "";
         for (var i = 0; i < repeticiones[key]; i++) {
-          //Por cada kit del tipo en el que este iterando actualmente añade un emoji representativo
+          //An emoji is added
           Cantidad = Cantidad + RepresentativeKitEmoji;
         }
         EmbedMenu.addFields({
-          //Graficamente le muestra al usuario el kit que no esta seleccionado actualmente
+          //And shows that the current user's selection is not this kit
           name: UnSelectedKitEmoji + key + UnSelectedKitEmoji,
           value: " " + Cantidad,
         });
       } else {
-        //Si no existe ningun kit del tipo actual
+        //If there's no kit from the selected kind
         EmbedMenu.addFields({
-          name: UnSelectedKitEmoji + key + UnSelectedKitEmoji, //Solamente le muestra graficamente que no tiene ningun kit de este tipo seleccionado y que tampoco esta sobre este indice
+          name: UnSelectedKitEmoji + key + UnSelectedKitEmoji, //Just shows that there's no kit from this kind selected
           value: " ",
         });
       }
@@ -212,29 +211,30 @@ async function refrescar(id, interaccion) {
 initBot();
 client.on("interactionCreate", async (interaction) => {
   if (interaction.commandName == "menu") {
-    //Embed del comando /menu, este muestra el boton para abrir el selector de kits
+    // /Menu embed
     EmbedSetMenu = new EmbedBuilder()
       .setTitle(EmbedTitle)
       .addFields({ name: Embed1Title, value: Embed1Content })
       .addFields({ name: Embed2Title, value: Embed2Content })
       .addFields({ name: Embed3Title, value: Embed3Content })
       .setColor("Orange")
-      .setFooter({ text: "Hecho con amor por: @HomeBrewerFox" });
     if (
-      //Verifica que la persona que envio el mensaje tenga permisos
+      //Checks that the one who sent the message has permissions
       interaction.member
         .permissionsIn(interaction.channel)
         .has(PermissionsBitField.Flags.Administrator)
     ) {
+      await interaction.reply({content: "The embed has been sent in the channel, now users can access it from here!", flags: MessageFlags.Ephemeral })
       client.channels.cache
         .get(interaction.channelId)
         .send({ embeds: [EmbedSetMenu], components: [row] });
     } else {
-      //Si no los tiene no va a enviar nada
-      await interaction.reply({ content: "No.", ephemeral: true });
+      //if the user does not have admin perms then the interaction is replied with a single "No."
+      await interaction.reply({ content: "No.", flags: MessageFlags.Ephemeral });
     }
   }
-  //Este comentario es de un sistema de verificacion con una api de reconocimiento de imagen, puede ser probada pero no es recomendado
+  //Fluffing Furry Identity that made me write this piece of code to detect if the one who asked for the kit is a femboy fox and to send it with a custom ML model (Who else was doing this kind of stuff at 15???)
+
   /*if (interaction.commandName == "verifyinfo") {
     let row = new ActionRowBuilder()
     row.addComponents(new ButtonBuilder()
@@ -251,7 +251,7 @@ client.on("interactionCreate", async (interaction) => {
     client.channels.cache.get(interaction.channelId).send({embeds:[EmbedSetMenu],components: [row]})
     }
     else {
-      await interaction.reply({content:"No.", ephemeral: true})
+      await interaction.reply({content:"No.", flags: MessageFlags.Ephemeral})
     }
   }*/
   /*
@@ -338,7 +338,7 @@ client.on("interactionCreate", async (interaction) => {
     }*/
 
     if (DiscordUserInfo[interaction.user.id] == undefined) {
-      //Si el usuario no tiene una interaccion se crea una
+      //If the user doesn't have an interaction then a new one is created
       DiscordUserInfo[interaction.user.id] = {
         Timestamp: Date.now(),
         Kits: [],
@@ -346,14 +346,14 @@ client.on("interactionCreate", async (interaction) => {
         interaccion: undefined,
       };
     } else {
-      //En caso de que ya tenga una interaccion
+      //In case there's an interaction
       if (
-        //Verifica que ya haya pasado un el delay de configuracion desde el ultimo intento de crear una nueva
+        //Checks that there's no remaining timeout
         DiscordUserInfo[interaction.user.id].Timestamp + MinuteKitDelay * 60 <
           Date.now() &&
         !interaction.member
           .permissionsIn(interaction.channel)
-          .has(PermissionsBitField.Flags.Administrator) //Si el usuario no es administrador va a hacer que el delay sea valido, en caso de que sea administrador no va a haber delay
+          .has(PermissionsBitField.Flags.Administrator) //If the user is an admin then there will not be any delay
       ) {
         await interaction.reply({
           embeds: [
@@ -363,11 +363,11 @@ client.on("interactionCreate", async (interaction) => {
               )
               .setColor("Red"),
           ],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
         return;
       } else {
-        // Si ya paso el delay se reinicia la informacion del selector
+        // If there's no remaining timeout then the info is refreshed
         DiscordUserInfo[interaction.user.id] = {
           Timestamp: Date.now(),
           Kits: [],
@@ -377,7 +377,7 @@ client.on("interactionCreate", async (interaction) => {
       }
     }
 
-    let row2 = new ActionRowBuilder(); //Se crea el menu con el que se inicia justo despues de solicitar el menu
+    let row2 = new ActionRowBuilder(); //Creates the second row after requesting the menu
     row2.addComponents(
       new ButtonBuilder()
         .setCustomId(interaction.user.id + "-0")
@@ -417,85 +417,82 @@ client.on("interactionCreate", async (interaction) => {
 
     EmbedMenu = new EmbedBuilder()
       .setTitle(KitSelectionMenuTitle)
-      .setColor("Random")
-      .setFooter({
-        text: "Hecho con amor por:                                      @HomeBrewerFox",
-      });
+      .setColor("Random");
     Object.keys(Bindings).forEach((key, index) => {
       if (index == DiscordUserInfo[interaction.user.id].index) {
-        // Verifica si el usuario tiene seleccionado el kit de esta iteracion
+        // Checks if the user has the selected kit on the current iteration
         EmbedMenu.addFields({
-          name: SelectedKitEmoji + key + SelectedKitEmoji, //Si es asi pone el emoji de seleccionado
+          name: SelectedKitEmoji + key + SelectedKitEmoji, //if so, the selected emoji is concatenated
           value: " ",
         });
       } else {
         EmbedMenu.addFields({
-          name: UnSelectedKitEmoji + key + UnSelectedKitEmoji, //Si no pone el que dice que no esta seleccionado
+          name: UnSelectedKitEmoji + key + UnSelectedKitEmoji, //else the emoji that represents non selected items is concatenated
           value: " ",
         });
       }
     });
     DiscordUserInfo[interaction.user.id].interaccion = interaction;
     await interaction.reply({
-      //Responde con el embed recien generado
+      //Replies with the generated embed
       embeds: [EmbedMenu],
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
       components: [row2],
     });
   }
 
   if (interaction.customId == interaction.user.id + "-0") {
-    //Handling del comportamiento del boton hacia abajo
+    //Handles the behaviour of the down button
     try {
       DiscordUserInfo[interaction.user.id].index =
-        DiscordUserInfo[interaction.user.id].index - 1; //Se reduce el indice
+        DiscordUserInfo[interaction.user.id].index - 1; //Index -1 
       if (DiscordUserInfo[interaction.user.id].index < 0) {
-        //Si es menor que cero se pone como el indice maximo (ultimo item)
+        //If the index is less than 0 then the item that is put is the first
         DiscordUserInfo[interaction.user.id].index =
           Object.keys(Bindings).length - 1;
       }
 
-      refrescar(interaction.user.id, interaction); //Se refresca la interaccion
+      refrescar(interaction.user.id, interaction); //Refreshes the interaction
     } catch {
-      // En caso de que algo pase se asume que el servidor se reincio
+      // If something passes then the bot infers that something happened
       await interaction.update({
         embeds: [
           new EmbedBuilder().setTitle(ServerRestartError).setColor("Red"),
         ],
         components: [],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
   }
   if (interaction.customId == interaction.user.id + "-1") {
-    //Handler del comportamiento de añadir kits
+    //Behaviour of the kit adding button
     try {
       DiscordUserInfo[interaction.user.id].Kits.push(
         Object.keys(Bindings)[DiscordUserInfo[interaction.user.id].index]
       );
 
-      refrescar(interaction.user.id, interaction); //Despues de añadir el kit actual a la lista de kits se refresca la interaccion
+      refrescar(interaction.user.id, interaction); //After adding a kit the interaction is refreshed
     } catch {
-      // En caso de que algo pase se asume que el servidor se reincio
+      // If something happens then it is infered that the server restarted
       await interaction.update({
         embeds: [
           new EmbedBuilder().setTitle(ServerRestartError).setColor("Red"),
         ],
         components: [],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
   }
 
   if (interaction.customId == interaction.user.id + "-2") {
-    //Handler del boton de enviar
+    //Send button handler
     try {
       if (DiscordUserInfo[interaction.user.id] == undefined) {
         await interaction.update({
           embeds: [
             new EmbedBuilder().setTitle(ServerRestartError).setColor("Red"),
           ],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
           components: [],
         });
         return;
@@ -512,12 +509,12 @@ client.on("interactionCreate", async (interaction) => {
         .setLabel(ModalLabel);
       modal.addComponents(new ActionRowBuilder().addComponents(usernameinput));
 
-      usuarios = await initBot.ObtenerUsuariosEnLinea(); //Obtiene los usuarios que estan actualmente en el servidor
+      usuarios = await initBot.ObtenerUsuariosEnLinea(); //Gets the users that are currently connected on the server
       if (Object.keys(usuarios).length >= 2) {
-        //Si hay mas de dos usuarios (El bot y alguien mas) envia el embed para preguntar cual es su nombre
+        //If there are two or more players in the server then the modal is shown
         await interaction.showModal(modal);
       } else {
-        //Si no retorna el mensaje de servidor vacio
+        //If there are less than 2 players the empty server error will be sent
         await DiscordUserInfo[interaction.user.id].interaccion.deleteReply();
         await interaction.reply({
           embeds: [
@@ -525,52 +522,52 @@ client.on("interactionCreate", async (interaction) => {
               .setTitle(MinecraftEmptyServerError)
               .setColor("Red"),
           ],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
         return;
       }
     } catch (e) {
-      //En caso de error se asume que el servidor se cerro
+      //In case of an error then the assumption will be that the server shut down
       console.log(e);
       await interaction.reply({
         embeds: [
           new EmbedBuilder().setTitle(ServerRestartError).setColor("Red"),
         ],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
   }
 
   if (interaction.customId == interaction.user.id + "-3") {
-    //Handler del boton de remover
+    //Remove button handler
     try {
       const indexToRemove = DiscordUserInfo[interaction.user.id].Kits.findIndex(
         (kit) =>
           kit ===
-          Object.keys(Bindings)[DiscordUserInfo[interaction.user.id].index] //Encuentra en que indice de kits se encuentra el kit que se va a remover
+          Object.keys(Bindings)[DiscordUserInfo[interaction.user.id].index] //Finds the index of the kit to remove
       );
       if (indexToRemove !== -1) {
-        DiscordUserInfo[interaction.user.id].Kits.splice(indexToRemove, 1); //Si el kit es encontrado se elimina del indice un kit del tipo
+        DiscordUserInfo[interaction.user.id].Kits.splice(indexToRemove, 1); //If the kit is found then remove it
       }
 
-      refrescar(interaction.user.id, interaction); //Se refresca el selector de kits
+      refrescar(interaction.user.id, interaction); //The kit's menu is refreshed
     } catch {
-      //En caso de error se asume que el servidor se cerro
+      //In case of an error then the assumption will be that the server shut down
       await interaction.update({
         embeds: [
           new EmbedBuilder().setTitle(ServerRestartError).setColor("Red"),
         ],
         components: [],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
   }
 
   if (interaction.customId == interaction.user.id + "-prompt") {
-    //Recibe la respuesta del usuario al seleccionar su usuario
+    //Receives the username answer
     try {
       let UsernameFound = false;
-      usuarios = await initBot.ObtenerUsuariosEnLinea(); //Obtiene los usuarios que estan actualmente en el servidor
+      usuarios = await initBot.ObtenerUsuariosEnLinea(); //Gets the users that are currently in the server
       if (
         interaction.fields.getTextInputValue("Username").toLowerCase() ==
         username.toLowerCase()
@@ -582,7 +579,7 @@ client.on("interactionCreate", async (interaction) => {
               .setColor("Red"),
           ],
           components: [],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
         DiscordUserInfo[interaction.user.id] = undefined;
         return;
@@ -604,7 +601,7 @@ client.on("interactionCreate", async (interaction) => {
               .setColor("Red"),
           ],
           components: [],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
         return;
       }
@@ -616,12 +613,12 @@ client.on("interactionCreate", async (interaction) => {
         i < DiscordUserInfo[interaction.user.id].Kits.length;
         i++
       ) {
-        // Añade cada kit a un string que se muestra en el voucher
+        // Appends the kit's name to a string that is going to be sent in the voucher
         NombreKits =
           NombreKits + " " + DiscordUserInfo[interaction.user.id].Kits[i];
         KitsValues.push(Bindings[DiscordUserInfo[interaction.user.id].Kits[i]]);
       }
-      EmbedKitEnviado = new EmbedBuilder() // El embed del voucher
+      EmbedKitEnviado = new EmbedBuilder() // Voucher's embed
         .setTitle(VoucherTitle)
         .addFields({
           name: "-----------------------------------------------------------------------------------",
@@ -639,45 +636,44 @@ client.on("interactionCreate", async (interaction) => {
           value: " ",
         })
         .setDescription(VoucherText)
-        .setColor("Green")
-        .setFooter({ text: "Hecho con amor por: @HomeBrewerFox" });
-      await interaction.reply({ embeds: [EmbedKitEnviado], ephemeral: true });
+        .setColor("Green");
+      await interaction.reply({ embeds: [EmbedKitEnviado], flags: MessageFlags.Ephemeral });
       await DiscordUserInfo[interaction.user.id].interaccion.deleteReply();
       initBot.QueueDelivery(
         KitsValues,
         interaction.fields.getTextInputValue("Username"),
         uuid
-      ); //Se envia el kit a la cola de envios pendientes
+      ); //The kit is sent into the queue
     } catch (e) {
       console.log(e);
       interaction.reply({
         embeds: [new EmbedBuilder().setTitle(GenericError).setColor("Red")],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
   }
 
   if (interaction.customId == interaction.user.id + "-4") {
-    //Handling del comportamiento del boton hacia abajo
+    // Up button behaviour
     try {
       DiscordUserInfo[interaction.user.id].index =
-        DiscordUserInfo[interaction.user.id].index + 1; //Se suma uno al indice
+        DiscordUserInfo[interaction.user.id].index + 1; //Item +1
       if (
-        //En caso de que ya sea el maximo se pasa a el primer item
+        //If we are on the top item then we jump to the last
         DiscordUserInfo[interaction.user.id].index >
         Object.keys(Bindings).length - 1
       ) {
         DiscordUserInfo[interaction.user.id].index = 0;
       }
 
-      refrescar(interaction.user.id, interaction); //Se refresca el selector de kits
+      refrescar(interaction.user.id, interaction); //The kit selector is refreshed
     } catch {
       await interaction.update({
         embeds: [
           new EmbedBuilder().setTitle(ServerRestartError).setColor("Red"),
         ],
         components: [],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
   }
