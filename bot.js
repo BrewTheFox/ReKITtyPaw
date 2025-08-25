@@ -1,4 +1,4 @@
-// Se importan modulos y se declaran variables importantes //
+// modules are imported and some important vars are initialized //
 const mineflayer = require("mineflayer");
 const {
   IsSlashKillAllowed,
@@ -150,6 +150,7 @@ function initBot() {
 
   function setBusyStatus(estado) {
     isBotBusy = estado; //This wasn't necessary buuut I'd rather to have it here because I wanted to avoid some external problems
+  }
 
   function HandleDelivery() {
     if (Object.keys(QueueItems).length > 0 && isBotBusy == false) {
@@ -366,5 +367,5 @@ function initBot() {
   module.exports.QueueDelivery = QueueDelivery; // Exports the modules for future access in index.js
   module.exports.ObtenerUsuariosEnLinea = ObtenerUsuariosEnLinea;
 }
-}
 module.exports = initBot;
+
